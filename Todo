@@ -1,7 +1,9 @@
 Todo
 x implement required API call to generate secret code
-- fix game logic to inform player of correct num guess, correct num and pos, and no corrects
-- error handling and verifing user input
-- type up README once everything is done or as I move along
+x fix game logic to inform player of correct num guess, correct num and pos, and no corrects
+x error handling and verifing user input
 - implement extentsions based off requirements
 - spice up UI, either through android app or some other method. Put in the creativity
+
+
+- type up README once everything is done or as I move along
