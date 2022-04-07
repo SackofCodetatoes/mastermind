@@ -1,7 +1,10 @@
 import java.util.Scanner;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
 
 public class mastermind{
-//dear god help me
   public static void main(String []args){
     gameLoop();
 
@@ -18,45 +21,60 @@ public class mastermind{
     System.out.println("Game Start!");
     System.out.println("===================");
 
-    while(attempts > 0 && !won){
-      System.out.println("Attempts Remaining: " + attempts);
-      System.out.println("Enter a combination: ");
-      userInput = reader.nextLine();
-      correctDigits = 0;
-      //check if userinput is valid before looping or make this section more robust. 
+    // while(attempts > 0 && !won){
+    //   System.out.println("Attempts Remaining: " + attempts);
+    //   System.out.println("Enter a combination: ");
+    //   userInput = reader.nextLine();
+    //   correctDigits = 0;
+    //   //check if userinput is valid before looping or make this section more robust. 
 
-      for(int i = 0; i < 4; i++){
-        if(userInput.charAt(i) == secretCode[i]){
-          // System.out.println("nice");
-          correctDigits+=1;
-        }
-      }
-      if(correctDigits == 4){
-        won = true;
-      }
-      else if(correctDigits > 0 && correctDigits < 4){
-        System.out.println("Player guessed a correct number and position. Try again.");
-      } 
-      else {
-        System.out.println("Player had no correct numbers. Try again.");
-      } 
+    //   for(int i = 0; i < 4; i++){
+    //     if(userInput.charAt(i) == secretCode[i]){
+    //       // System.out.println("nice");
+    //       correctDigits+=1;
+    //     }
+    //   }
+    //   if(correctDigits == 4){
+    //     won = true;
+    //   }
+    //   else if(correctDigits > 0 && correctDigits < 4){
+    //     System.out.println("Player guessed a correct number and position. Try again.");
+    //   } 
+    //   else {
+    //     System.out.println("Player had no correct numbers. Try again.");
+    //   } 
 
-      attempts-=1;
-    }
-    reader.close();
-    if(won){
-      System.out.println("You won, Congradulations!");
-    }
-    else{
-        System.out.println("Better luck next time");
-    }
+    //   attempts-=1;
+    // }
+    // reader.close();
+    // if(won){
+    //   System.out.println("You won, Congradulations!");
+    // }
+    // else{
+    //     System.out.println("Better luck next time");
+    // }
 
    }
 
   private static char[] generateSecretCode(){
     // call api to generate code, will have static code for time being
     char[] secretCode = {'1', '2', '3', '4'};
+    var client = HttpClient.newHttpClient();
+
+    var request = HttpRequest.newBuilder(
+      URI.create("https://www.random.org/integers/?num=4&min=1&max=8&col=1&base=10&format=plain&rnd=new"))
+      .header("accept", "application/json")
+      .build();
     
+    // var response = client.send(request, new JsonBodyHandler<>(APOD.class));
+    try{
+      var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+      System.out.println(response.body());
+    } catch (Exception e){
+        e.printStackTrace();
+    }
+      // System.out.println(response.body().get().title);
+
     return secretCode;
   }
 
