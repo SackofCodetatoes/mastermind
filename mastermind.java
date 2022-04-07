@@ -12,12 +12,12 @@ public class mastermind{
 
   public static void gameLoop(){
     boolean won = false;
-    int attempts = 10, correctDigits = 0, correctPositions = 0;
-    char secretCode[] = generateSecretCode();
-    boolean secretCodeNums[] = new boolean[8];
+    int attempts = 10, correctDigits = 0, correctPositions = 0, currentInt;
+    int secretCode[] = generateSecretCode();
+    boolean secretNums[] = new boolean[8];
 
     for(int i = 0; i < 4; i++){
-      secretCodeNums[Character.getNumericValue(secretCode[i])] = true;
+      secretNums[secretCode[i]] = true;
     };
 
     Scanner reader = new Scanner(System.in);
@@ -28,42 +28,59 @@ public class mastermind{
 
     while(attempts > 0 && !won){
       System.out.println("Attempts Remaining: " + attempts);
-      System.out.println("Enter a combination: ");
+      System.out.println("Enter a combination of numbers (0 - 7): ");
       userInput = reader.nextLine();
       correctDigits = 0;
+      correctPositions = 0;
       //check if userinput is valid before looping or make this section more robust. 
 
-      for(int i = 0; i < 4; i++){
-        if(userInput.charAt(i) == secretCode[i]){
-          correctPositions+=1;
-        }
-        // if(userInput.charAt(i))
+      userInput = userInput.replaceAll("[^0-7]", "");
+      if(userInput.length() != 4){
+        System.out.println("Invalid Response, try again.");
       }
-      if(correctPositions == 4){
-        won = true;
-      }
-      else if(correctDigits > 0 && correctDigits < 4){
-        System.out.println("Player guessed a correct number and position. Try again.");
-      } 
       else {
-        System.out.println("Player had no correct numbers. Try again.");
-      } 
+        for(int i = 0; i < 4; i++){
+          currentInt = Character.getNumericValue(userInput.charAt(i));
 
-      attempts-=1;
+          if(currentInt == secretCode[i]){
+            correctPositions+=1;
+          }
+          if(secretNums[currentInt]){
+            correctDigits+=1;
+          }
+        }
+
+        if(correctPositions == 4){
+          won = true;
+        }
+        else if(correctPositions > 0){
+          System.out.println("Player guessed a correct number and position. Try again.");
+        } 
+        else if(correctDigits > 0) {
+          System.out.println("Player guessed a correct number. Try again.");
+        } 
+        else {
+          System.out.println("No correct guesses. Try again.");
+        }
+
+        attempts-=1;
+      }
     }
+
     reader.close();
     if(won){
       System.out.println("You won, Congradulations!");
     }
     else{
-        System.out.println("Better luck next time");
+        System.out.println("Game Over. The correct code was " + secretCode[0] + secretCode[1] + secretCode[2] + secretCode[3]+ ". Better luck next time");
     }
 
    }
 
-  private static char[] generateSecretCode(){
+
+  private static int[] generateSecretCode(){
     // call api to generate code, will have static code for time being
-    char secretCode[] = {'1', '2', '3', '4'};
+    int secretCode[] = {1, 2, 3, 4};
     var client = HttpClient.newHttpClient();
 
     var request = HttpRequest.newBuilder(
@@ -76,13 +93,14 @@ public class mastermind{
       var response = client.send(request, HttpResponse.BodyHandlers.ofString());
       String responseString = response.body();
       //parse string
-      responseString = responseString.replaceAll("[^0-9]", "");
-      // System.out.println(responseString.length());
-      responseString.getChars(0, responseString.length(), secretCode, 0);
+      responseString = responseString.replaceAll("[^0-7]", "");
+      for(int i = 0; i < responseString.length(); i++){
+        secretCode[i] = Character.getNumericValue(responseString.charAt(i));
+      }
+
     } catch (Exception e){
         e.printStackTrace();
     }
-      // System.out.println(response.body().get().title);
 
     return secretCode;
   }
