@@ -1,4 +1,5 @@
 Todo
+- implement required API call to generate secret code
 - error handling and verifing user input
 - type up README once everything is done or as I move along
 - implement extentsions based off requirements
