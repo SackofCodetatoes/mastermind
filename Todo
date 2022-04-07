@@ -1,5 +1,6 @@
 Todo
-- implement required API call to generate secret code
+x implement required API call to generate secret code
+- fix game logic to inform player of correct num guess, correct num and pos, and no corrects
 - error handling and verifing user input
 - type up README once everything is done or as I move along
 - implement extentsions based off requirements
